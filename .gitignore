@@ -1,0 +1,7 @@
+__pycache__/
+packer_cache/
+output/
+.history/
+.vscode/
+*.log
+*.code-workspace

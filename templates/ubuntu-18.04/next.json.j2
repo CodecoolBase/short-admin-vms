@@ -1,0 +1,64 @@
+{
+  "builders": [
+    {
+      "export_opts": [
+        "--ovf20",
+        "--manifest",
+        "--options", "manifest,nomacs",
+        "--vsys", "0",
+        "--description", "base:{$ base_name $}",
+        "--product", "{{ build_name }}",
+        "--version", "{{ user `build_timestamp` }}-{$ git_commit_hash $}",
+        "--vmname", "{{ build_name }}-{{ user `build_timestamp` }}"
+      ],
+      "format": "ova",
+      "guest_additions_mode": "disable",
+      "headless": true,
+      "name": "{{ user `name` }}",
+      "output_directory": "output/{{ build_name }}-{{ user `build_timestamp` }}",
+      "output_filename": "{{ build_name }}-{{ user `build_timestamp` }}-{$ git_commit_hash $}",
+      "shutdown_command": "echo '{$ pass $}' | sudo -S shutdown -P now",
+      "source_path": "{$ base_path $}",
+      "ssh_password": "{$ pass $}",
+      "ssh_timeout": "10000s",
+      "ssh_username": "{$ user $}",
+      "type": "virtualbox-ovf",
+      "vboxmanage": [
+        {% if graphicscontroller %}
+          ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
+        {% endif %}
+        ["modifyvm", "{{ .Name }}", "--memory", {$ memory $}],
+        ["modifyvm", "{{ .Name }}", "--vram", {$ vram | default(16) $}],
+        ["modifyvm", "{{ .Name }}", "--clipboard-mode", "{$ clipboardmode | default('disabled') $}"],
+        ["modifyvm", "{{ .Name }}", "--draganddrop", "{$ draganddrop | default('disabled') $}"]
+      ],
+      "vboxmanage_post": [
+        ["modifyvm", "{{ .Name }}", "--vrde", "off"]
+      ],
+      "vm_name": "{{ build_name }}"
+    }
+  ],
+  "provisioners": [
+    {
+      "environment_vars": [
+        {% if keep_x %}
+          "KEEP_X=yes",
+        {% endif %}
+        "HOME_DIR=/home/{$ user $}"
+      ],
+      "execute_command": "echo '{$ pass $}' | {{ .Vars }} sudo -S -E sh -eux '{{ .Path }}'",
+      "expect_disconnect": true,
+      "scripts": [
+        {% for script in scripts %}
+          "{$ scripts_dir $}/{$script$}.sh",
+        {% endfor %}
+        "{$ scripts_dir $}/cleanup.sh",
+        "{$ scripts_dir $}/minimize.sh"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "build_timestamp": "{{ isotime \"2006-01-02-15-04-05\" }}"
+  }
+}

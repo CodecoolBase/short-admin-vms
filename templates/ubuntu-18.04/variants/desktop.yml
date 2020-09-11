@@ -1,0 +1,11 @@
+user: ubuntu
+pass: ubuntu
+graphicscontroller: vboxvga
+clipboardmode: bidirectional
+dragandrop: bidirectional
+memory: 2048
+vram: 128
+keep_x: true
+scripts:
+  - desktop
+  - misc

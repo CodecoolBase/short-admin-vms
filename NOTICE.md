@@ -23,7 +23,7 @@ The following files are taken from the [Bento project][bento], version [`b7b8a9b
   - Make it a Jinja template
 - [packer_templates/ubuntu/http/preseed.cfg][preseed.cfg.orig] &#10230; [templates/ubuntu-18.04/preseed/base.cfg.j2][base.cfg.j2]
   - Remove LVM configuration and use direct partitioning
-  - Remove unused packages, keep only `openssh-server`
+  - Remove unused packages keep only `openssh-server` (for provisioning), `build-essential`, `dkms` and `linux-headers-$(uname -r)` (to build Virtual Box Guest Addition modules)
   - Make it a Jinja template
 
 [bento]: https://github.com/chef/bento

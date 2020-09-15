@@ -4,7 +4,6 @@ from os import environ
 from pathlib import Path
 from sys import argv
 from tempfile import NamedTemporaryFile, TemporaryDirectory
-
 import subprocess
 import yaml
 
@@ -35,9 +34,8 @@ def get_next_context(template, variant, variant_path):
     base_ovas = list(OUT_DIR.rglob(f"{template}-base-*.ova"))
     base_ovas.sort(reverse=True)
     if len(base_ovas) == 0:
-        raise ValueError("No base OVA found to build upon")
+        raise ValueError("No base OVA found")
     base_ova = base_ovas[0]
-    context["base_path"] = base_ova.as_posix()
     context["base_name"] = base_ova.name
     return context
 
@@ -94,7 +92,7 @@ def packer_build(work_dir, template, variant, variant_path):
         print(packer_template_path)
         print(packer_template_path.read_text())
 
-    proc = subprocess.run(
+    subprocess.run(
         ["packer", "build", "-var", f"name={template}-{variant}", packer_template_path],
         check=True,
     )

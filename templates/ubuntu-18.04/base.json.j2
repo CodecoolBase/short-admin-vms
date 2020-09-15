@@ -27,7 +27,7 @@
         "<enter><wait>"
       ],
       "export_opts": [
-        "--ovf20",
+        "--ovf10",
         "--manifest",
         "--options", "manifest,nomacs",
         "--vsys", "0",
@@ -46,6 +46,7 @@
       "http_directory": "{$ http_directory $}",
       "iso_checksum": "8c5fc24894394035402f66f3824beb7234b757dd2b5531379cb310cedfdf0996",
       "iso_url": "http://cdimage.ubuntu.com/ubuntu/releases/18.04.5/release/ubuntu-18.04.5-server-amd64.iso",
+      "keep_registered": true,
       "memory": {$ memory $},
       "name": "{{ user `name` }}",
       "output_directory": "output/{{ build_name }}-{{ user `build_timestamp` }}",
@@ -64,9 +65,10 @@
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{ .Name }}", "--vrde", "off"],
-        ["storageattach", "{{ .Name }}", "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "dvddrive", "--medium", "emptydrive"]
+        ["storageattach", "{{ .Name }}", "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "dvddrive", "--medium", "emptydrive"],
+        ["snapshot", "{{ .Name }}", "take", "base"]
       ],
-      "vm_name": "{{ build_name }}"
+      "vm_name": "packer-{$ template $}-{$ variant $}"
     }
   ],
   "provisioners": [

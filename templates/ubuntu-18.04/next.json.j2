@@ -1,8 +1,9 @@
 {
   "builders": [
     {
+      "attach_snapshot": "base",
       "export_opts": [
-        "--ovf20",
+        "--ovf10",
         "--manifest",
         "--options", "manifest,nomacs",
         "--vsys", "0",
@@ -18,11 +19,10 @@
       "output_directory": "output/{{ build_name }}-{{ user `build_timestamp` }}",
       "output_filename": "{{ build_name }}-{{ user `build_timestamp` }}-{$ git_commit_hash $}",
       "shutdown_command": "echo '{$ pass $}' | sudo -S shutdown -P now",
-      "source_path": "{$ base_path $}",
       "ssh_password": "{$ pass $}",
       "ssh_timeout": "10000s",
       "ssh_username": "{$ user $}",
-      "type": "virtualbox-ovf",
+      "type": "virtualbox-vm",
       "vboxmanage": [
         {% if graphicscontroller %}
           ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
@@ -35,7 +35,7 @@
       "vboxmanage_post": [
         ["modifyvm", "{{ .Name }}", "--vrde", "off"]
       ],
-      "vm_name": "{{ build_name }}"
+      "vm_name": "packer-{$ template $}-base"
     }
   ],
   "provisioners": [

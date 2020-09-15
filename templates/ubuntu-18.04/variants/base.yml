@@ -1,5 +1,7 @@
 user: ubuntu
 pass: ubuntu
+domain: localhost
+hostname: vm
 memory: 512
 scripts:
   - misc

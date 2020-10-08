@@ -31,7 +31,7 @@ def get_base_context(template, variant, variant_path, preseed_template_path):
 
 def get_next_context(template, variant, variant_path):
     context = get_context(template, variant, variant_path)
-    base_ovas = list(OUT_DIR.rglob(f"{template}-base-*.ova"))
+    base_ovas = list(OUT_DIR.rglob(f"{template}-base.ova"))
     base_ovas.sort(reverse=True)
     if len(base_ovas) == 0:
         raise ValueError("No base OVA found")

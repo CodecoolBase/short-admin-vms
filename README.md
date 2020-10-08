@@ -20,6 +20,16 @@ pipenv shell
 
 `python build-all.py` or `python build.py ubuntu-18.04 base`
 
+## Release
+
+[Install GitHub CLI](https://cli.github.com/), login with `gh auth login` and issue a command such as the following after the build
+
+```
+gh release create --title <tag> <tag> $(ls -Recurse output -Include *.ova).Name -Join " "
+```
+
+and replace `<tag>` with the actual tag to use.
+
 ## Licenses
 
 ```text

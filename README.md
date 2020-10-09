@@ -28,7 +28,7 @@ pipenv shell
 1. Create one or more personal access token with `repo` and/or `admin:org` scoped permissions
 1. Run `gh auth login` and use one of the tokens
 1. Run `python release.py` **after the build** to output the `gh` command that creates the release
-1. Might need to include `gh release --repo <OWNER>/<REPO>` information to specify which user/organization/repo to create the release at exactly
+1. Use `python release.py --owner <OWNER> --repo <REPO>` to specify which user/organization/repo to create the release at exactly
 
 ## Licenses
 

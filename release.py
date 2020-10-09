@@ -2,6 +2,7 @@ from git import Repo
 from semver import VersionInfo
 from pathlib import Path
 from sys import argv
+import argparse
 
 OUT_DIR = Path("output")
 GIT_LATEST_TAG = Repo().tags[-1].name
@@ -11,24 +12,31 @@ GIT_RELEASE_TAG = f"v{RELEASE_VERSION}"
 
 
 def main():
-    template = argv[1] if len(argv) > 1 else "ubuntu-18.04"
-    ovas = list(OUT_DIR.rglob(f"{template}-*.ova"))
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--template", choices=["ubuntu-18.04"], default="ubuntu-18.04")
+    parser.add_argument("--repo")
+    parser.add_argument("--owner")
+    args = parser.parse_args()
+    if bool(args.owner) ^ bool(args.repo):
+        parser.error("--owner and --repo must be given together")
+    ovas = list(OUT_DIR.rglob(f"{args.template}-*.ova"))
     ovas = sorted(ovas, key=lambda ova: ova.absolute())
     ovas = {ova.name: ova for ova in ovas if ova.name not in ovas}
     ovas = [str(ova) for ova in ovas.values()]
-    print(
-        " ".join(
-            [
-                "gh",
-                "release",
-                "create",
-                "--title",
-                GIT_RELEASE_TAG,
-                GIT_RELEASE_TAG,
-                *ovas,
-            ]
-        )
-    )
+    params = [
+        "gh",
+        "release",
+    ]
+    if bool(args.owner) and bool(args.repo):
+        params += ["--repo", f"{args.owner}/{args.repo}"]
+    params += [
+        "create",
+        "--title",
+        GIT_RELEASE_TAG,
+        GIT_RELEASE_TAG,
+        *ovas,
+    ]
+    print(" ".join(params))
 
 
 if __name__ == "__main__":

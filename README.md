@@ -22,13 +22,8 @@ pipenv shell
 
 ## Release
 
-[Install GitHub CLI](https://cli.github.com/), login with `gh auth login` and issue a command such as the following after the build
-
-```
-gh release create --title <tag> <tag> $(ls -Recurse output -Include *.ova).Name -Join " "
-```
-
-and replace `<tag>` with the actual tag to use.
+[Install GitHub CLI](https://cli.github.com/) and login with `gh auth login` then run `python release.py` **after the build**.
+It'll run `gh` and upload the necessary binaries and tag the release by bumping the minor version.
 
 ## Licenses
 

@@ -117,10 +117,24 @@ def build(template, variant):
         packer_build(Path(work_dir), template, variant, variants[variant])
 
 
+def build_all(template, variants):
+    if variants[0] != "base":
+        raise ValueError(
+            "Variant 'base' must be built and it must be first to be built"
+        )
+    for variant in variants:
+        build(template, variant)
+
+
 def main():
-    template = argv[1] if len(argv) > 1 else None
-    variant = argv[2] if len(argv) > 2 else "all"
-    build(template, variant)
+    template = argv[1] if len(argv) > 1 else "ubuntu-18.04"
+    variants = (
+        ["base", "nossh", "mininet", "desktop", "db"] if len(argv) <= 1 else argv[1:]
+    )
+    build_all(template, variants)
+    subprocess.run(
+        ["VBoxManage", "unregistervm", f"packer-{template}-base", "--delete"]
+    )
 
 
 if __name__ == "__main__":

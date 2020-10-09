@@ -2,7 +2,6 @@ from git import Repo
 from semver import VersionInfo
 from pathlib import Path
 from sys import argv
-import subprocess
 
 OUT_DIR = Path("output")
 GIT_LATEST_TAG = Repo().tags[-1].name
@@ -16,16 +15,19 @@ def main():
     ovas = list(OUT_DIR.rglob(f"{template}-*.ova"))
     ovas = sorted(ovas, key=lambda ova: ova.absolute())
     ovas = {ova.name: ova for ova in ovas if ova.name not in ovas}
-    subprocess.run(
-        [
-            "gh",
-            "release",
-            "create",
-            "--title",
-            GIT_RELEASE_TAG,
-            GIT_RELEASE_TAG,
-            *ovas.values(),
-        ]
+    ovas = [str(ova) for ova in ovas.values()]
+    print(
+        " ".join(
+            [
+                "gh",
+                "release",
+                "create",
+                "--title",
+                GIT_RELEASE_TAG,
+                GIT_RELEASE_TAG,
+                *ovas,
+            ]
+        )
     )
 
 

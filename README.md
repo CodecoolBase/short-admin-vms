@@ -18,7 +18,9 @@ pipenv shell
 
 ## Build
 
-`python build-all.py` or `python build.py ubuntu-18.04 base`
+`python build.py` or `python build.py ubuntu-18.04 base nossh`
+
+**Note**: `base` must be specified and it must be the first thing to build (all other variants are based on it).
 
 ## Release
 

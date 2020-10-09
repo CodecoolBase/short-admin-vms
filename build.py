@@ -129,7 +129,9 @@ def build_all(template, variants):
 def main():
     template = argv[1] if len(argv) > 1 else "ubuntu-18.04"
     variants = (
-        ["base", "nossh", "mininet", "desktop", "db"] if len(argv) <= 1 else argv[1:]
+        ["base", "nossh", "mininet", "desktop", "db", "www"]
+        if len(argv) <= 1
+        else argv[2:]
     )
     build_all(template, variants)
     subprocess.run(

@@ -4,9 +4,11 @@ from os import environ
 from pathlib import Path
 from sys import argv
 from tempfile import NamedTemporaryFile, TemporaryDirectory
+import argparse
 import subprocess
 import yaml
 
+ALL_VARIANTS = ("base", "nossh", "mininet", "desktop", "db", "www")
 DEBUG = "DEBUG" in environ
 OUT_DIR = Path("output")
 GIT_COMMIT_HASH = Repo().head.object.hexsha
@@ -37,6 +39,7 @@ def get_next_context(template, variant, variant_path):
         raise ValueError("No base OVA found")
     base_ova = base_ovas[0]
     context["base_name"] = base_ova.name
+    context["files_folder"] = Path("files").absolute().as_posix()
     return context
 
 
@@ -117,26 +120,25 @@ def build(template, variant):
         packer_build(Path(work_dir), template, variant, variants[variant])
 
 
-def build_all(template, variants):
-    if variants[0] != "base":
-        raise ValueError(
-            "Variant 'base' must be built and it must be first to be built"
-        )
-    for variant in variants:
-        build(template, variant)
-
-
 def main():
-    template = argv[1] if len(argv) > 1 else "ubuntu-18.04"
-    variants = (
-        ["base", "nossh", "mininet", "desktop", "db", "www"]
-        if len(argv) <= 1
-        else argv[2:]
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--template", choices=["ubuntu-18.04"], default="ubuntu-18.04")
+    parser.add_argument("--keep-base-vm", action="store_true")
+    parser.add_argument(
+        "variants",
+        nargs="?",
+        const=ALL_VARIANTS,
+        choices=ALL_VARIANTS,
+        default=ALL_VARIANTS,
     )
-    build_all(template, variants)
-    subprocess.run(
-        ["VBoxManage", "unregistervm", f"packer-{template}-base", "--delete"]
-    )
+    args = parser.parse_args()
+    variants = args.variants if type(args.variants) == tuple else [args.variants]
+    for variant in variants:
+        build(args.template, variant)
+    if not args.keep_base_vm:
+        subprocess.run(
+            ["VBoxManage", "unregistervm", f"packer-{args.template}-base", "--delete"]
+        )
 
 
 if __name__ == "__main__":

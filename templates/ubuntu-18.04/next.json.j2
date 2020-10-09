@@ -24,6 +24,7 @@
       "ssh_username": "{$ user $}",
       "type": "virtualbox-vm",
       "vboxmanage": [
+        ["sharedfolder", "add", "{{ .Name }}", "--name", "files", "--hostpath", "{$ files_folder $}", "--readonly", "--automount", "--auto-mount-point", "/mnt"],
         {% if graphicscontroller %}
           ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
         {% endif %}
@@ -33,7 +34,8 @@
         ["modifyvm", "{{ .Name }}", "--draganddrop", "{$ draganddrop | default('disabled') $}"]
       ],
       "vboxmanage_post": [
-        ["modifyvm", "{{ .Name }}", "--vrde", "off"]
+        ["modifyvm", "{{ .Name }}", "--vrde", "off"],
+        ["sharedfolder", "remove", "{{ .Name }}", "--name", "files"]
       ],
       "vm_name": "packer-{$ template $}-base"
     }

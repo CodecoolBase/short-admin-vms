@@ -8,7 +8,6 @@ import argparse
 import subprocess
 import yaml
 
-ALL_VARIANTS = ["base", "nossh", "mininet", "desktop", "db", "www"]
 DEBUG = "DEBUG" in environ
 OUT_DIR = Path("output")
 GIT_COMMIT_HASH = Repo().head.object.hexsha
@@ -121,25 +120,33 @@ def build(template, variant):
         packer_build(Path(work_dir), template, variant, variants[variant])
 
 
-def main():
+def get_args():
+    all_variants = ["base", "nossh", "mininet", "desktop", "db", "www"]
+
     def variant_type(x):
-        if not x in ALL_VARIANTS:
+        if not x in all_variants:
             raise argparse.ArgumentTypeError(
-                f"invalid choice: '{x}' (choose from 'base', 'nossh', 'mininet', 'desktop', 'db', 'www')"
+                f"invalid choice: '{x}' (choose from 'base', 'nossh', 'mininet', 'desktop', 'db', 'www', 'kernel')"
             )
         return x
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--template", choices=["ubuntu-18.04"], default="ubuntu-18.04")
-    parser.add_argument("--keep-base-vm", action="store_true")
+    parser.add_argument("-t", "--template", choices=["ubuntu"], default="ubuntu")
+    parser.add_argument("-r", "--release", choices=["18.04", "20.04"], default="18.04")
+    parser.add_argument("-K", "--keep-base-vm", action="store_true")
     parser.add_argument(
         "variants",
         metavar="variant",
         type=variant_type,
         nargs="*",
-        default=ALL_VARIANTS,
+        default=all_variants,
     )
     args = parser.parse_args()
+    return args
+
+
+def main():
+    args = get_args()
     for variant in args.variants:
         build(args.template, variant)
     if not args.keep_base_vm:

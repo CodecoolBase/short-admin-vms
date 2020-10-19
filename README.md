@@ -4,7 +4,8 @@ Automated Oracle VM VirtualBox Ubuntu build using Packer.
 
 ## Prerequisites
 
-- Packer 1.6.2
+- Packer 1.6.5
+  - One of `xorriso`, `mkisofs`, `hdiutil` (normally found in macOS) or `oscdimg` (normally found in Windows as part of the [Windows ADK](https://docs.microsoft.com/en-us/windows-hardware/get-started/adk-install)) is required by Packer
 - Oracle VM VirtualBox 6.1.14
 - Oracle VM VirtualBox Guest Additions 6.1.14
 - Oracle VM VirtualBox Extension Pack 6.1.14
@@ -18,9 +19,9 @@ pipenv shell
 
 ## Build
 
-`python build.py` or `python build.py ubuntu-18.04 base nossh`
+Run `python -m lib.build` or `python - lib.build --help` for usage information.
 
-**Note**: `base` must be specified and it must be the first thing to build (all other variants are based on it).
+**Note**: if `base` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-base` named VM must exist with a snapshot attached to it called `Base`.
 
 ## Release
 

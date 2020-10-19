@@ -5,3 +5,5 @@ output/
 .vscode/
 *.log
 *.code-workspace
+*.local.yml
+*.local.yaml

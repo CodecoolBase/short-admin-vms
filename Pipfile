@@ -8,9 +8,11 @@ black = "20.8b1"
 
 [packages]
 jinja2 = "2.11.2"
-pyyaml = "5.3.1"
 gitpython = "3.1.8"
 semver = "2.10.2"
+"ruamel.yaml" = "0.16.12"
+passlib = "1.7.4"
+deepmerge = "0.1.1"
 
 [requires]
 python_version = "3.8"

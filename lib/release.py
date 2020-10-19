@@ -13,13 +13,14 @@ GIT_RELEASE_TAG = f"v{RELEASE_VERSION}"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--template", choices=["ubuntu-18.04"], default="ubuntu-18.04")
+    parser.add_argument("--template", choices=["ubuntu"], default="ubuntu")
+    parser.add_argument("--release", choices=["18.04", "20.04"], default="18.04")
     parser.add_argument("--repo")
     parser.add_argument("--owner")
     args = parser.parse_args()
     if bool(args.owner) ^ bool(args.repo):
         parser.error("--owner and --repo must be given together")
-    ovas = list(OUT_DIR.rglob(f"{args.template}-*.ova"))
+    ovas = list(OUT_DIR.rglob(f"{args.template}-{args.release}-*.ova"))
     ovas = sorted(ovas, key=lambda ova: ova.absolute())
     ovas = {ova.name: ova for ova in ovas if ova.name not in ovas}
     ovas = [str(ova) for ova in ovas.values()]

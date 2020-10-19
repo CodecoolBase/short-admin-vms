@@ -1,5 +1,5 @@
 #!/bin/sh -eux
-apt-get -y install mininet openvswitch-testcontroller
+apt-get -y install python mininet openvswitch-testcontroller
 systemctl stop openvswitch-testcontroller
 systemctl disable openvswitch-testcontroller
 systemctl enable openvswitch-switch

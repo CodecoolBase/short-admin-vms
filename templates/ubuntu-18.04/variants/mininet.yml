@@ -1,6 +1,0 @@
-user: ubuntu
-pass: ubuntu
-memory: 512
-scripts:
-  - mininet
-  - misc

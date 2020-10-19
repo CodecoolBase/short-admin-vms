@@ -1,20 +1,25 @@
 {
   "builders": [
     {
-      "attach_snapshot": "base",
+      "attach_snapshot": "Base",
+      "cd_files": [
+        "files/*"
+      ],
+      "cd_label": "files",
       "export_opts": [
         "--ovf10",
         "--manifest",
         "--options", "manifest,nomacs",
         "--vsys", "0",
-        "--description", "base:{$ base_name $}",
+        "--description", "{{ build_name }}",
         "--product", "{{ build_name }}",
-        "--version", "{{ user `build_timestamp` }}-{$ git_commit_hash $}",
-        "--vmname", "{{ build_name }}-{{ user `build_timestamp` }}"
+        "--version", "{{ user `build_timestamp` }}",
+        "--vmname", "{{ build_name }}"
       ],
       "format": "ova",
       "guest_additions_mode": "disable",
-      "headless": true,
+      "headless": {$ 'true' if headless else 'false' $},
+      "keep_registered": true,
       "name": "{{ user `name` }}",
       "output_directory": "output/{{ build_name }}-{{ user `build_timestamp` }}",
       "output_filename": "{{ build_name }}",
@@ -22,40 +27,44 @@
       "ssh_password": "{$ pass $}",
       "ssh_timeout": "10000s",
       "ssh_username": "{$ user $}",
+      "target_snapshot": "{{ build_name }}-{{ user `build_timestamp` }}",
       "type": "virtualbox-vm",
       "vboxmanage": [
-        ["sharedfolder", "add", "{{ .Name }}", "--name", "files", "--hostpath", "{$ files_folder $}", "--readonly", "--automount", "--auto-mount-point", "/mnt"],
         {% if graphicscontroller %}
           ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
         {% endif %}
-        ["modifyvm", "{{ .Name }}", "--memory", {$ memory $}],
+        ["modifyvm", "{{ .Name }}", "--memory", {$ build_memory $}],
         ["modifyvm", "{{ .Name }}", "--vram", {$ vram | default(16) $}],
         ["modifyvm", "{{ .Name }}", "--clipboard-mode", "{$ clipboardmode | default('disabled') $}"],
         ["modifyvm", "{{ .Name }}", "--draganddrop", "{$ draganddrop | default('disabled') $}"]
       ],
       "vboxmanage_post": [
-        ["modifyvm", "{{ .Name }}", "--vrde", "off"],
-        ["sharedfolder", "remove", "{{ .Name }}", "--name", "files"]
+        ["modifyvm", "{{ .Name }}", "--memory", {$ memory $}],
+        ["modifyvm", "{{ .Name }}", "--vrde", "off"]
       ],
-      "vm_name": "packer-{$ template $}-base"
+      "vm_name": "packer-{$ args.template $}-{$ args.release $}-base"
     }
   ],
   "provisioners": [
     {
       "environment_vars": [
-        {% if keep_x %}
+        {% if keep_x -%}
           "KEEP_X=yes",
-        {% endif %}
+        {% endif -%}
         "HOME_DIR=/home/{$ user $}"
       ],
       "execute_command": "echo '{$ pass $}' | {{ .Vars }} sudo -S -E sh -eux '{{ .Path }}'",
       "expect_disconnect": true,
       "scripts": [
-        {% for script in scripts %}
-          "{$ scripts_dir $}/{$script$}.sh",
-        {% endfor %}
-        "{$ scripts_dir $}/cleanup.sh",
-        "{$ scripts_dir $}/minimize.sh"
+        {%- for script in scripts_before %}
+          "{$ paths.scripts_dir $}/{$ script $}.sh",
+        {%- endfor %}
+        {%- for script in scripts %}
+          "{$ paths.scripts_dir $}/{$ script $}.sh",
+        {%- endfor %}
+        {%- for script in scripts_after %}
+          "{$ paths.scripts_dir $}/{$ script $}.sh"{% if not loop.last %},{% endif %}
+        {%- endfor %}
       ],
       "type": "shell"
     }

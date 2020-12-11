@@ -7,12 +7,12 @@ defaults:
   disk_size: 50000
   domain: localhost
   files_folder: files
-  headless: false
+  headless: true
   hostname: vm
   build_memory: 1024
   memory: 512
   packer_j2_name: next.json.j2
-  pass: ubuntu
+  user: ubuntu
   scripts: []
   scripts_after:
     - cleanup
@@ -21,7 +21,8 @@ defaults:
     - update
     - virtualbox
     - common
-  user: ubuntu
+  vagrant: false
+  pass: ubuntu
 releases:
   '18.04':
     boot_command:

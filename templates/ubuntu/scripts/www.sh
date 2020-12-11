@@ -10,8 +10,10 @@ a2enmod userdir
 #   --domains www.theworldsworstwebsiteever.com,theworldsworstwebsiteever.com \
 #   --no-parent \
 #   https://www.theworldsworstwebsiteever.com/
-mount /dev/sr1 /media
-unzip -od /var/www/html /media/www.theworldsworstwebsiteever.com.zip
-umount /dev/sr1
+last_cdrom_device=$(ls -1 /dev/sr* | sort | tail -1)
+dd if=$last_cdrom_device of=files.iso
+7z x files.iso -o.
+rm files.iso
+unzip -od /var/www/html www.theworldsworstwebsiteever.com.zip
 systemctl enable apache2
 systemctl restart apache2

@@ -16,6 +16,10 @@ The following files are taken from the [Bento project][bento], version [`b7b8a9b
   - Remove command that deletes documentation packages
   - Make deleting X11 related packages conditional
   - Omit deleting certain packages
+- [packer_templates/ubuntu/scripts/vagrant.sh][vagrant.sh.orig] &#10230; [templates/ubuntu/scripts/vagrant.sh][vagrant.sh]
+  - Use `BASE_USER` variable instead of `vagrant`
+- [packer_templates/ubuntu/scripts/sudoers.sh][sudoers.sh.orig] &#10230; [templates/ubuntu/scripts/vagrant_sudoers.sh][vagrant_sudoers.sh]
+  - Use `BASE_USER` variable instead of `vagrant`
 - [packer_templates/ubuntu/ubuntu-amd64.json][ubuntu-amd64.json.orig] &#10230; [templates/ubuntu/base.json.j2][base.json.j2]
   - Remove unused builders and configuration keys
   - Remove script references from provisioner
@@ -34,11 +38,15 @@ The following files are taken from the [Bento project][bento], version [`b7b8a9b
 [minimize.sh]: templates/ubuntu/scripts/minimize.sh
 [virtualbox.sh.orig]: https://github.com/chef/bento/blob/b7b8a9bd30e143514b61a694c7d37155733adea1/packer_templates/_common/virtualbox.sh
 [virtualbox.sh]: templates/ubuntu/scripts/virtualbox.sh
+[sudoers.sh.orig]: https://github.com/chef/bento/blob/b7b8a9bd30e143514b61a694c7d37155733adea1/packer_templates/ubuntu/scripts/sudoers.sh
+[vagrant_sudoers.sh]: templates/ubuntu/scripts/vagrant_sudoers.sh
 [update.sh.orig]: https://github.com/chef/bento/blob/b7b8a9bd30e143514b61a694c7d37155733adea1/packer_templates/ubuntu/scripts/update.sh
 [update.sh]: templates/ubuntu/scripts/update.sh
 [cleanup.sh.orig]: https://github.com/chef/bento/blob/b7b8a9bd30e143514b61a694c7d37155733adea1/packer_templates/ubuntu/scripts/cleanup.sh
 [cleanup.sh]: templates/ubuntu/scripts/cleanup.sh
-[ubuntu-amd64.json.orig]: https://github.com/chef/bento/blob/master/packer_templates/ubuntu/ubuntu-amd64.json
+[ubuntu-amd64.json.orig]: https://github.com/chef/bento/blob/b7b8a9bd30e143514b61a694c7d37155733adea1/packer_templates/ubuntu/ubuntu-18.04-amd64.json
+[vagrant.sh.orig]: https://github.com/chef/bento/blob/b7b8a9bd30e143514b61a694c7d37155733adea1/packer_templates/ubuntu/scripts/vagrant.sh
+[vagrant.sh]: templates/ubuntu/scripts/vagrant.sh
 [base.json.j2]: templates/ubuntu/base.json.j2
-[preseed.cfg.orig]: https://github.com/chef/bento/blob/master/packer_templates/ubuntu/http/preseed.cfg
+[preseed.cfg.orig]: https://github.com/chef/bento/blob/b7b8a9bd30e143514b61a694c7d37155733adea1/packer_templates/ubuntu/http/preseed.cfg
 [config.yml]: templates/ubuntu/config.yml

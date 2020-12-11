@@ -9,7 +9,7 @@
       "export_opts": [
         "--ovf10",
         "--manifest",
-        "--options", "manifest,nomacs",
+        "--options", "manifest,nomacsbutnat",
         "--vsys", "0",
         "--description", "{{ build_name }}",
         "--product", "{{ build_name }}",
@@ -51,7 +51,8 @@
         {% if keep_x -%}
           "KEEP_X=yes",
         {% endif -%}
-        "HOME_DIR=/home/{$ user $}"
+        "BASE_USER={$ user $}",
+        "BASE_PASS={$ pass $}"
       ],
       "execute_command": "echo '{$ pass $}' | {{ .Vars }} sudo -S -E sh -eux '{{ .Path }}'",
       "expect_disconnect": true,
@@ -68,6 +69,15 @@
       ],
       "type": "shell"
     }
+  ],
+  "post-processors": [
+    {% if vagrant -%}
+    {
+      "output": "output/{{ build_name }}-{{ user `build_timestamp` }}/{{ build_name }}.box",
+      "type": "vagrant",
+      "keep_input_artifact": true
+    }
+    {% endif -%}
   ],
   "variables": {
     "build_timestamp": "{{ isotime \"2006-01-02-15-04-05\" }}"

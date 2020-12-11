@@ -1,8 +1,5 @@
 #!/bin/sh -eux
 
-# set a default HOME_DIR environment variable if not set
-HOME_DIR="${HOME_DIR:-/home/vagrant}";
-
 case "$PACKER_BUILDER_TYPE" in
 virtualbox-iso|virtualbox-ovf)
     VER="`cat $HOME_DIR/.vbox_version`";

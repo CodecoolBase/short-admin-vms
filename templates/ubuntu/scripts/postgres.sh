@@ -1,9 +1,9 @@
 #!/bin/sh -eux
 apt-get -y install postgresql
 sudo -u postgres -- $SHELL <<EOF
-createuser -s ubuntu
-createdb -O ubuntu ubuntu
-psql -c "ALTER USER ubuntu WITH PASSWORD 'ubuntu';"
+createuser -s "$BASE_USER"
+createdb -O "$BASE_USER" "$BASE_USER"
+psql -c "ALTER USER $BASE_USER WITH PASSWORD '$BASE_PASS';"
 EOF
 config_file=$(sudo -iu postgres psql -t -P format=unaligned -c 'SHOW config_file')
 hba_file=$(sudo -iu postgres psql -t -P format=unaligned -c 'SHOW hba_file')

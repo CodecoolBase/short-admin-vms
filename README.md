@@ -23,6 +23,18 @@ Run `python -m lib.build` or `python - lib.build --help` for usage information.
 
 **Note**: if `base` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-base` named VM must exist with a snapshot attached to it called `Base`.
 
+### Vagrant
+
+Use the following to create a Vagrant box
+
+```sh
+python -m lib.build --debug --release 18.04 base --extra-base-config '
+vagrant: true
+user: vagrant
+pass: vagrant
+'
+```
+
 ## Release
 
 1. [Install GitHub CLI](https://cli.github.com/)

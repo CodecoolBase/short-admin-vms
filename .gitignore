@@ -3,6 +3,8 @@ packer_cache/
 output/
 .history/
 .vscode/
+.DS_Store
+*.pyc
 *.log
 *.code-workspace
 *.local.yml

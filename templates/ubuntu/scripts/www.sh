@@ -1,5 +1,5 @@
 #!/bin/sh -eux
-apt-get -y install apache2
+apt-get -y install apache2 p7zip-full
 a2enmod userdir
 # wget \
 #   --recursive \
@@ -17,3 +17,6 @@ rm files.iso
 unzip -od /var/www/html www.theworldsworstwebsiteever.com.zip
 systemctl enable apache2
 systemctl restart apache2
+# 7z is needed to extract the ISO mounted by Packer
+# if it contains long filenames (Joliet ISO extension)
+apt-get remove p7zip-full

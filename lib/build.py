@@ -13,6 +13,11 @@ import subprocess
 
 def _get_paths(args, work_dir, variant):
     output_dir = Path("output")
+    output_dir.mkdir(exist_ok=True)
+    ova_output_dir = output_dir.joinpath("ova")
+    ova_output_dir.mkdir(exist_ok=True)
+    box_output_dir = output_dir.joinpath("box")
+    box_output_dir.mkdir(exist_ok=True)
     files_dir = Path("files").absolute()
     template_dir = Path(f"templates/{args.template}")
     scripts_dir = template_dir.joinpath("scripts")
@@ -22,6 +27,8 @@ def _get_paths(args, work_dir, variant):
     build_dir.mkdir()
     if args.debug:
         print(f"output_dir: {output_dir}")
+        print(f"ova_output_dir: {ova_output_dir}")
+        print(f"box_output_dir: {box_output_dir}")
         print(f"files_dir: {files_dir}")
         print(f"template_dir: {template_dir}")
         print(f"scripts_dir: {scripts_dir}")
@@ -30,6 +37,8 @@ def _get_paths(args, work_dir, variant):
         print(f"build_dir: {build_dir}")
     return {
         "output_dir": output_dir,
+        "ova_output_dir": ova_output_dir,
+        "box_output_dir": box_output_dir,
         "files_dir": files_dir,
         "template_dir": template_dir,
         "scripts_dir": scripts_dir,
@@ -53,6 +62,8 @@ def _get_context(args, paths, variant, webhook_server_address):
     merger.merge(context, config["defaults"])
     merger.merge(context, config["releases"][args.release])
     merger.merge(context, config["variants"][variant])
+    if args.vagrant:
+        merger.merge(context, config["vagrant"])
     extras_config_file = getattr(args, f"extras_{variant}_config_file")
     if extras_config_file:
         with open(extras_config_file) as f:
@@ -116,6 +127,8 @@ def _build(args, paths, context, template):
 
 
 def _unregister_base(args):
+    if args.dry_run:
+        return
     subprocess.run(
         [
             "VBoxManage",

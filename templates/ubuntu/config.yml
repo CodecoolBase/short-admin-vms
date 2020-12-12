@@ -23,6 +23,10 @@ defaults:
     - common
   vagrant: false
   pass: ubuntu
+vagrant:
+  user: vagrant
+  vagrant: true
+  pass: vagrant
 releases:
   '18.04':
     boot_command:

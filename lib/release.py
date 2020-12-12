@@ -21,9 +21,11 @@ def main():
     if bool(args.owner) ^ bool(args.repo):
         parser.error("--owner and --repo must be given together")
     ovas = list(OUT_DIR.rglob(f"{args.template}-{args.release}-*.ova"))
-    ovas = sorted(ovas, key=lambda ova: ova.absolute())
-    ovas = {ova.name: ova for ova in ovas if ova.name not in ovas}
-    ovas = [str(ova) for ova in ovas.values()]
+    boxes = list(OUT_DIR.rglob(f"{args.template}-{args.release}-*.box"))
+    files = [*ovas, *boxes]
+    files = sorted(files, key=lambda f: f.absolute())
+    files = {f.name: f for f in files if f.name not in files}
+    files = [str(f) for f in files.values()]
     params = [
         "gh",
         "release",
@@ -35,7 +37,7 @@ def main():
         "--title",
         GIT_RELEASE_TAG,
         GIT_RELEASE_TAG,
-        *ovas,
+        *files,
     ]
     print(" ".join(params))
 

@@ -57,6 +57,7 @@ def _create_base_parser(first_run, known_variants=[]):
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
     parser.add_argument("--keep-base-registered", action="store_true")
+    parser.add_argument("--vagrant", action="store_true")
     parser.add_argument(
         "variants",
         metavar="variant",

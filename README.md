@@ -20,28 +20,17 @@ pipenv shell
 ## Build
 
 Run `python -m lib.build` or `python - lib.build --help` for usage information.
+Use `python -m lib.build --vagrant` to produce Vagrant boxes.
 
 **Note**: if `base` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-base` named VM must exist with a snapshot attached to it called `Base`.
-
-### Vagrant
-
-Use the following to create a Vagrant box
-
-```sh
-python -m lib.build --debug --release 18.04 base --extra-base-config '
-vagrant: true
-user: vagrant
-pass: vagrant
-'
-```
 
 ## Release
 
 1. [Install GitHub CLI](https://cli.github.com/)
 1. Create one or more personal access token with `repo` and/or `admin:org` scoped permissions
 1. Run `gh auth login` and use one of the tokens
-1. Run `python release.py` **after the build** to output the `gh` command that creates the release
-1. Use `python release.py --owner <OWNER> --repo <REPO>` to specify which user/organization/repo to create the release at exactly
+1. Run `python -m lib.release` **after the build** to output the `gh` command that creates the release
+1. Use `python -m lib.release --owner <OWNER> --repo <REPO>` to specify which user/organization/repo to create the release at exactly
 
 ## Licenses
 

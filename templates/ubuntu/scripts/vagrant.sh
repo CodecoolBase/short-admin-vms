@@ -10,5 +10,5 @@ else
     echo "Cannot download vagrant public key";
     exit 1;
 fi
-chown -R $BASE_USER $HOME_DIR/.ssh;
+chown -R $ADMIN_USER $HOME_DIR/.ssh;
 chmod -R go-rwsx $HOME_DIR/.ssh;

@@ -52,8 +52,8 @@
           "KEEP_X=yes",
         {% endif -%}
         "HOME_DIR=/home/{$ user $}",
-        "BASE_USER={$ user $}",
-        "BASE_PASS={$ pass $}"
+        "ADMIN_USER={$ user $}",
+        "ADMIN_PASS={$ pass $}"
       ],
       "execute_command": "echo '{$ pass $}' | {{ .Vars }} sudo -S -E sh -eux '{{ .Path }}'",
       "expect_disconnect": true,

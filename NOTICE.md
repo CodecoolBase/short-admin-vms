@@ -17,9 +17,9 @@ The following files are taken from the [Bento project][bento], version [`b7b8a9b
   - Make deleting X11 related packages conditional
   - Omit deleting certain packages
 - [packer_templates/ubuntu/scripts/vagrant.sh][vagrant.sh.orig] &#10230; [templates/ubuntu/scripts/vagrant.sh][vagrant.sh]
-  - Use `BASE_USER` variable instead of `vagrant`
+  - Use `ADMIN_USER` variable instead of `vagrant`
 - [packer_templates/ubuntu/scripts/sudoers.sh][sudoers.sh.orig] &#10230; [templates/ubuntu/scripts/vagrant_sudoers.sh][vagrant_sudoers.sh]
-  - Use `BASE_USER` variable instead of `vagrant`
+  - Use `ADMIN_USER` variable instead of `vagrant`
 - [packer_templates/ubuntu/ubuntu-amd64.json][ubuntu-amd64.json.orig] &#10230; [templates/ubuntu/base.json.j2][base.json.j2]
   - Remove unused builders and configuration keys
   - Remove script references from provisioner

@@ -19,4 +19,4 @@ systemctl enable apache2
 systemctl restart apache2
 # 7z is needed to extract the ISO mounted by Packer
 # if it contains long filenames (Joliet ISO extension)
-apt-get remove p7zip-full
+apt-get remove -y p7zip-full

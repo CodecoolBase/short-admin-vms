@@ -4,14 +4,14 @@ from .yaml_parser import yaml
 
 def get_args():
     # First pass, unknown variants are ignored
-    parser = _create_base_parser(True)
+    parser = _create_parser(True)
     known_args, remaining_args = parser.parse_known_args()
     _normalize_args(known_args)
     if known_args.debug:
         print(known_args, remaining_args)
     # For the second pass a stricter parser is used
     # and additional arguments are added dynamically
-    parser = _create_base_parser(False, known_args.variants)
+    parser = _create_parser(False, known_args.variants)
     args = parser.parse_args()
     _normalize_args(args)
     if args.debug:
@@ -19,8 +19,9 @@ def get_args():
     return args
 
 
-def _create_base_parser(first_run, known_variants=[]):
-    all_variants = ["base", "nossh", "mininet", "desktop", "db", "www"]
+def _create_parser(first_run, known_variants=[]):
+    # TODO: available variants should be read from the config dynamically
+    all_variants = ["root", "base", "nossh", "mininet", "desktop", "db", "www"]
     seen_variants = []
 
     def existing_variant_type(x):
@@ -56,7 +57,7 @@ def _create_base_parser(first_run, known_variants=[]):
     parser.add_argument("--release", choices=["18.04", "20.04"], default="18.04")
     parser.add_argument("--debug", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
-    parser.add_argument("--keep-base-registered", action="store_true")
+    parser.add_argument("--unregister-root", action="store_true")
     parser.add_argument("--vagrant", action="store_true")
     parser.add_argument(
         "variants",
@@ -78,7 +79,7 @@ def _normalize_args(args):
     # in the available list of variants, filtering them out for good measure
     args.variants = [x for x in args.variants if not x == None]
 
-    # The `base` variant must always be the first thing to be built when present
-    if "base" in args.variants:
-        args.variants.pop(args.variants.index("base"))
-        args.variants.insert(0, "base")
+    # The `root` variant must always be the first thing to be built when present
+    if "root" in args.variants:
+        args.variants.pop(args.variants.index("root"))
+        args.variants.insert(0, "root")

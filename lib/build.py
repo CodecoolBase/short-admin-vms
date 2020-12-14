@@ -119,21 +119,21 @@ def _build(args, paths, context, template):
                 "packer",
                 "build",
                 "-var",
-                f'name={args.template}-{args.release}-{context["variant"]}',
+                f'name={"vagrant-" if args.vagrant else ""}{args.template}-{args.release}-{context["variant"]}',
                 packer_template_json_file,
             ],
             check=True,
         )
 
 
-def _unregister_base(args):
+def _unregister_root(args):
     if args.dry_run:
         return
     subprocess.run(
         [
             "VBoxManage",
             "unregistervm",
-            f"packer-{args.template}-{args.release}-base",
+            f'packer-{"vagrant-" if args.vagrant else ""}{args.template}-{args.release}-root',
             "--delete",
         ]
     )
@@ -148,8 +148,8 @@ def main():
             context = _get_context(args, paths, variant, webhook_server_address)
             template = _get_template(args, paths, context)
             _build(args, paths, context, template)
-        if "base" in args.variants and not args.keep_base_registered:
-            _unregister_base(args)
+        if "root" in args.variants and args.unregister_root:
+            _unregister_root(args)
 
 
 if __name__ == "__main__":

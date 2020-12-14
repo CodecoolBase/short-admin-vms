@@ -22,7 +22,7 @@ pipenv shell
 Run `python -m lib.build` or `python - lib.build --help` for usage information.
 Use `python -m lib.build --vagrant` to produce Vagrant boxes.
 
-**Note**: if `base` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-base` named VM must exist with a snapshot attached to it called `Base`.
+**Note**: if `root` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-root` named VM must exist with a snapshot attached to it called `Root`.
 
 ## Release
 

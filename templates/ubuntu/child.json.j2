@@ -1,7 +1,7 @@
 {
   "builders": [
     {
-      "attach_snapshot": "Base",
+      "attach_snapshot": "Root",
       "cd_files": [
         "files/*"
       ],
@@ -19,7 +19,7 @@
       "format": "ova",
       "guest_additions_mode": "disable",
       "headless": {$ 'true' if headless else 'false' $},
-      "keep_registered": true,
+      "keep_registered": false,
       "name": "{{ user `name` }}",
       "output_directory": "{$ paths.ova_output_dir $}/{{ build_name }}-{{ user `build_timestamp` }}",
       "output_filename": "{{ build_name }}",
@@ -42,7 +42,7 @@
         ["modifyvm", "{{ .Name }}", "--memory", {$ memory $}],
         ["modifyvm", "{{ .Name }}", "--vrde", "off"]
       ],
-      "vm_name": "packer-{$ args.template $}-{$ args.release $}-base"
+      "vm_name": "packer-{% if vagrant %}vagrant-{% endif %}{$ args.template $}-{$ args.release $}-root"
     }
   ],
   "provisioners": [

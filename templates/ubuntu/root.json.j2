@@ -11,8 +11,6 @@
         "files/*"
       ],
       "cd_label": "files",
-      "cpus": {$ cpus | default(1) $},
-      "disk_size": {$ disk_size | default(40000) $},
       "export_opts": [
         "--ovf10",
         "--manifest",
@@ -24,6 +22,8 @@
         "--vmname", "{{ build_name }}"
       ],
       "format": "ova",
+      "cpus": {$ cpus | default(1) $},
+      "disk_size": {$ disk_size | default(40000) $},
       "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
       "guest_os_type": "Ubuntu_64",
       "hard_drive_interface": "sata",
@@ -34,7 +34,7 @@
       "keep_registered": true,
       "memory": {$ build_memory $},
       "name": "{{ user `name` }}",
-      "output_directory": "{$ paths.ova_output_dir $}/{{ build_name }}-{{ user `build_timestamp` }}",
+      "output_directory": "{$ paths.output_dir $}/{{ build_name }}-{{ user `build_timestamp` }}",
       "output_filename": "{{ build_name }}",
       "shutdown_command": "echo '{$ pass $}' | sudo -S shutdown -P now",
       "ssh_handshake_attempts": {$ ssh_handshake_attempts | default(10) $},
@@ -53,9 +53,9 @@
         ["modifyvm", "{{ .Name }}", "--memory", {$ memory $}],
         ["modifyvm", "{{ .Name }}", "--vrde", "off"],
         ["storageattach", "{{ .Name }}", "--storagectl", "IDE Controller", "--port", 0, "--device", 1, "--type", "dvddrive", "--medium", "emptydrive"],
-        ["snapshot", "{{ .Name }}", "take", "Base"]
+        ["snapshot", "{{ .Name }}", "take", "Root"]
       ],
-      "vm_name": "packer-{$ args.template $}-{$ args.release $}-{$ variant $}"
+      "vm_name": "packer-{% if vagrant %}vagrant-{% endif %}{$ args.template $}-{$ args.release $}-{$ variant $}"
     }
   ],
   "provisioners": [
@@ -87,15 +87,6 @@
       ],
       "type": "shell"
     }
-  ],
-  "post-processors": [
-    {% if vagrant -%}
-    {
-      "output": "{$ paths.box_output_dir $}/{{ build_name }}-{{ user `build_timestamp` }}/{{ build_name }}.box",
-      "type": "vagrant",
-      "keep_input_artifact": true
-    }
-    {%- endif %}
   ],
   "variables": {
     "build_timestamp": "{{ isotime \"2006-01-02-15-04-05\" }}"

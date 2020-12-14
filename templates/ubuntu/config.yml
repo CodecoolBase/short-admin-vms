@@ -11,16 +11,13 @@ defaults:
   hostname: vm
   build_memory: 1024
   memory: 512
-  packer_j2_name: next.json.j2
+  packer_j2_name: child.json.j2
   user: ubuntu
   scripts: []
   scripts_after:
     - cleanup
     - minimize
-  scripts_before:
-    - update
-    - virtualbox
-    - common
+  scripts_before: []
   vagrant: false
   pass: ubuntu
 vagrant:
@@ -122,8 +119,14 @@ releases:
     # before cloud-init finishes.
     ssh_handshake_attempts: 1000
 variants:
-  base:
-    packer_j2_name: base.json.j2
+  root:
+    packer_j2_name: root.json.j2
+    scripts_after: []
+    scripts_before:
+      - update
+      - virtualbox
+      - common
+  base: {}
   db:
     scripts:
       - postgres

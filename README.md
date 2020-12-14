@@ -9,6 +9,7 @@ Automated Oracle VM VirtualBox Ubuntu build using Packer.
 - Oracle VM VirtualBox 6.1.14
 - Oracle VM VirtualBox Guest Additions 6.1.14
 - Oracle VM VirtualBox Extension Pack 6.1.14
+- Vagrant 2.2.14
 
 ## Install
 
@@ -20,7 +21,7 @@ pipenv shell
 ## Build
 
 Run `python -m lib.build` or `python - lib.build --help` for usage information.
-Use `python -m lib.build --vagrant` to produce Vagrant boxes.
+Use `python -m lib.build --vagrant base` to produce Vagrant boxes.
 
 **Note**: if `root` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-root` named VM must exist with a snapshot attached to it called `Root`.
 
@@ -31,6 +32,16 @@ Use `python -m lib.build --vagrant` to produce Vagrant boxes.
 1. Run `gh auth login` and use one of the tokens
 1. Run `python -m lib.release` **after the build** to output the `gh` command that creates the release
 1. Use `python -m lib.release --owner <OWNER> --repo <REPO>` to specify which user/organization/repo to create the release at exactly
+
+### Vagrant
+
+Vagrant boxes are released through Vagrant Cloud.
+
+1. Login at https://app.vagrantup.com/ using an existing account
+1. Create a token and copy/save it somewhere
+1. Login with `vagrant cloud auth login --username <username> --token <token>`
+1. Create a box if one doesn't exist yet, e.g. `vagrant cloud auth box create <organization>/<box-name>`
+1. Publish an existing local box image, e.g. `vagrant cloud publish <organization>/<box-name> <version> virtualbox <path-to-box>`
 
 ## Licenses
 

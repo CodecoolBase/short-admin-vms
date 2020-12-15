@@ -1,17 +1,18 @@
-from .argument_parser import get_args
-from .j2 import j2_ctx, j2_path
-from .merger_config import merger
-from .webhook_server import run_webhook_server_thread
-from .yaml_parser import yaml
 from io import StringIO
 from pathlib import Path
 from sys import stdout
 from tempfile import TemporaryDirectory
 import inspect
 import subprocess
+from .argument_parser import get_args
+from .file_server import run_file_server_thread
+from .j2 import j2_ctx, j2_path
+from .merger_config import merger
+from .webhook_server import run_webhook_server_thread
+from .yaml_parser import yaml
 
 
-def _get_paths(args, work_dir, variant):
+def _get_paths(config_yml_file, args, work_dir, variant):
     output_dir = Path("output")
     output_dir.mkdir(exist_ok=True)
     ova_output_dir = output_dir.joinpath("ova")
@@ -19,9 +20,7 @@ def _get_paths(args, work_dir, variant):
     box_output_dir = output_dir.joinpath("box")
     box_output_dir.mkdir(exist_ok=True)
     files_dir = Path("files").absolute()
-    template_dir = Path(f"templates/{args.template}")
-    scripts_dir = template_dir.joinpath("scripts")
-    config_yml_file = template_dir.joinpath("config.yml")
+    scripts_dir = Path("scripts").absolute()
     work_dir = Path(work_dir)
     build_dir = work_dir.joinpath(variant)
     build_dir.mkdir()
@@ -30,7 +29,6 @@ def _get_paths(args, work_dir, variant):
         print(f"ova_output_dir: {ova_output_dir}")
         print(f"box_output_dir: {box_output_dir}")
         print(f"files_dir: {files_dir}")
-        print(f"template_dir: {template_dir}")
         print(f"scripts_dir: {scripts_dir}")
         print(f"config_yml_file: {config_yml_file}")
         print(f"work_dir: {work_dir}")
@@ -40,7 +38,6 @@ def _get_paths(args, work_dir, variant):
         "ova_output_dir": ova_output_dir,
         "box_output_dir": box_output_dir,
         "files_dir": files_dir,
-        "template_dir": template_dir,
         "scripts_dir": scripts_dir,
         "config_yml_file": config_yml_file,
         "work_dir": work_dir,
@@ -48,19 +45,29 @@ def _get_paths(args, work_dir, variant):
     }
 
 
-def _get_context(args, paths, variant, webhook_server_address):
+def _get_services(args):
+    # The host is accessible at 10.0.2.2 as the default gateway when using NAT in VirtualBox
+    # See https://www.virtualbox.org/manual/UserManual.html#network_nat
+    default_gateway_ip = "10.0.2.2"
+    webhook_server_address = run_webhook_server_thread(args.debug)
+    file_server_address = run_file_server_thread(args.debug)
+    return {
+        "webhook_server_url": f"http://{default_gateway_ip}:{webhook_server_address[1]}",
+        "file_server_url": f"http://{default_gateway_ip}:{file_server_address[1]}",
+    }
+
+
+def _get_context(args, paths, variant, services):
     config = yaml.load(paths["config_yml_file"])
     context = {
         "variant": variant,
         "args": {k: getattr(args, k) for k in vars(args)},
         "paths": {k: v.as_posix() for k, v in paths.items()},
-        "dynamic": {
-            "webhook_server_address": webhook_server_address[0],
-            "webhook_server_port": webhook_server_address[1],
-        },
+        "services": services,
     }
     merger.merge(context, config["defaults"])
-    merger.merge(context, config["releases"][args.release])
+    merger.merge(context, config["distros"][args.distro]["defaults"])
+    merger.merge(context, config["distros"][args.distro][args.release])
     merger.merge(context, config["variants"][variant])
     if args.vagrant:
         merger.merge(context, config["vagrant"])
@@ -83,7 +90,7 @@ def _get_context(args, paths, variant, webhook_server_address):
 
 
 def _get_template(args, paths, context):
-    packer_j2_file = Path(paths["template_dir"].joinpath(context["packer_j2_name"]))
+    packer_j2_file = Path(context["packer_j2_name"])
     template = j2_path(context, packer_j2_file)
     if args.debug:
         print(template)
@@ -119,7 +126,7 @@ def _build(args, paths, context, template):
                 "packer",
                 "build",
                 "-var",
-                f'name={"vagrant-" if args.vagrant else ""}{args.template}-{args.release}-{context["variant"]}',
+                f'name={"vagrant-" if args.vagrant else ""}{args.distro}-{args.release}-{context["variant"]}',
                 packer_template_json_file,
             ],
             check=True,
@@ -127,28 +134,29 @@ def _build(args, paths, context, template):
 
 
 def _unregister_root(args):
-    if args.dry_run:
-        return
     subprocess.run(
         [
             "VBoxManage",
             "unregistervm",
-            f'packer-{"vagrant-" if args.vagrant else ""}{args.template}-{args.release}-root',
+            f'packer-{"vagrant-" if args.vagrant else ""}{args.distro}-{args.release}-root',
             "--delete",
         ]
     )
 
 
 def main():
+    config_yml_file = Path("config.yml")
+    with config_yml_file.open() as f:
+        config = yaml.load(f)
     with TemporaryDirectory() as work_dir:
-        args = get_args()
-        webhook_server_address = run_webhook_server_thread(args)
+        args = get_args(config)
+        services = _get_services(args)
         for variant in args.variants:
-            paths = _get_paths(args, work_dir, variant)
-            context = _get_context(args, paths, variant, webhook_server_address)
+            paths = _get_paths(config_yml_file, args, work_dir, variant)
+            context = _get_context(args, paths, variant, services)
             template = _get_template(args, paths, context)
             _build(args, paths, context, template)
-        if "root" in args.variants and args.unregister_root:
+        if not args.dry_run and "root" in args.variants and args.unregister_root:
             _unregister_root(args)
 
 

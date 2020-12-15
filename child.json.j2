@@ -2,10 +2,6 @@
   "builders": [
     {
       "attach_snapshot": "Root",
-      "cd_files": [
-        "files/*"
-      ],
-      "cd_label": "files",
       "export_opts": [
         "--ovf10",
         "--manifest",
@@ -42,7 +38,7 @@
         ["modifyvm", "{{ .Name }}", "--memory", {$ memory $}],
         ["modifyvm", "{{ .Name }}", "--vrde", "off"]
       ],
-      "vm_name": "packer-{% if vagrant %}vagrant-{% endif %}{$ args.template $}-{$ args.release $}-root"
+      "vm_name": "packer-{% if vagrant %}vagrant-{% endif %}{$ args.distro $}-{$ args.release $}-root"
     }
   ],
   "provisioners": [
@@ -53,7 +49,8 @@
         {% endif -%}
         "HOME_DIR=/home/{$ user $}",
         "ADMIN_USER={$ user $}",
-        "ADMIN_PASS={$ pass $}"
+        "ADMIN_PASS={$ pass $}",
+        "FILE_SERVER_URL={$ services.file_server_url $}"
       ],
       "execute_command": "echo '{$ pass $}' | {{ .Vars }} sudo -S -E sh -eux '{{ .Path }}'",
       "expect_disconnect": true,

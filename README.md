@@ -20,8 +20,14 @@ pipenv shell
 
 ## Build
 
-Run `python -m lib.build` or `python - lib.build --help` for usage information.
-Use `python -m lib.build --vagrant base` to produce Vagrant boxes.
+- Run `python -m lib.build --help` for usage information
+- The distro and release must be specified
+- All variants are built automatically to build
+- Add `--vagrant` to produce Vagrant boxes
+
+```sh
+python -m lib.build ubuntu 18.04 root base mininet
+```
 
 **Note**: if `root` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-root` named VM must exist with a snapshot attached to it called `Root`.
 
@@ -37,7 +43,7 @@ Use `python -m lib.build --vagrant base` to produce Vagrant boxes.
 
 Vagrant boxes are released through Vagrant Cloud.
 
-1. Login at https://app.vagrantup.com/ using an existing account
+1. Login at <https://app.vagrantup.com/> using an existing account
 1. Create a token and copy/save it somewhere
 1. Login with `vagrant cloud auth login --username <username> --token <token>`
 1. Create a box if one doesn't exist yet, e.g. `vagrant cloud auth box create <organization>/<box-name>`

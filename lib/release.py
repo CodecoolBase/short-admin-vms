@@ -1,7 +1,6 @@
 from git import Repo
 from semver import VersionInfo
 from pathlib import Path
-from sys import argv
 import argparse
 
 OUT_DIR = Path("output")
@@ -15,18 +14,18 @@ GIT_RELEASE_TAG = f"v{RELEASE_VERSION}"
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--template", choices=["ubuntu"], default="ubuntu")
-    parser.add_argument("--release", choices=["18.04", "20.04"], default="18.04")
-    parser.add_argument("--repo")
-    parser.add_argument("--owner")
+    parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--repo", required=True)
+    parser.add_argument("--owner", required=True)
     args = parser.parse_args()
-    if bool(args.owner) ^ bool(args.repo):
-        parser.error("--owner and --repo must be given together")
-    ovas = list(OVA_DIR.rglob(f"{args.template}-{args.release}-*.ova"))
-    boxes = list(BOX_DIR.rglob(f"{args.template}-{args.release}-*.box"))
+    ovas = list(OVA_DIR.rglob("*.ova"))
+    boxes = list(BOX_DIR.rglob("*.box"))
     files = [*ovas, *boxes]
     files = sorted(files, key=lambda f: f.absolute())
     files = {f.name: f for f in files if f.name not in files}
+    if args.debug:
+        for file in files:
+            print(files[file].name)
     files = [str(f) for f in files.values()]
     params = [
         "gh",

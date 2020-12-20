@@ -26,13 +26,11 @@
       "target_snapshot": "{{ build_name }}-{{ user `build_timestamp` }}",
       "type": "virtualbox-vm",
       "vboxmanage": [
-        {% if graphicscontroller %}
-          ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
-        {% endif %}
+        ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
         ["modifyvm", "{{ .Name }}", "--memory", {$ build_memory $}],
-        ["modifyvm", "{{ .Name }}", "--vram", {$ vram | default(16) $}],
-        ["modifyvm", "{{ .Name }}", "--clipboard-mode", "{$ clipboardmode | default('disabled') $}"],
-        ["modifyvm", "{{ .Name }}", "--draganddrop", "{$ draganddrop | default('disabled') $}"]
+        ["modifyvm", "{{ .Name }}", "--vram", {$ vram $}],
+        ["modifyvm", "{{ .Name }}", "--clipboard-mode", "{$ clipboardmode $}"],
+        ["modifyvm", "{{ .Name }}", "--draganddrop", "{$ draganddrop $}"]
       ],
       "vboxmanage_post": [
         ["modifyvm", "{{ .Name }}", "--memory", {$ memory $}],

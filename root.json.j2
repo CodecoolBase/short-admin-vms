@@ -6,9 +6,9 @@
           "{$ command $}"{%- if not loop.last -%},{%- endif -%}
         {%- endfor %}
       ],
-      "boot_wait": "{$ boot_wait | default('10s') $}",
-      "cpus": {$ cpus | default(1) $},
-      "disk_size": {$ disk_size | default(40000) $},
+      "boot_wait": "{$ boot_wait $}",
+      "cpus": {$ cpus $},
+      "disk_size": {$ disk_size $},
       "export_opts": [
         "--ovf10",
         "--manifest",
@@ -34,16 +34,14 @@
       "output_filename": "{{ build_name }}",
       "shutdown_command": "echo '{$ pass $}' | sudo -S /sbin/shutdown -P now",
       "skip_export": true,
-      "ssh_handshake_attempts": {$ ssh_handshake_attempts | default(10) $},
+      "ssh_handshake_attempts": {$ ssh_handshake_attempts $},
       "ssh_password": "{$ pass $}",
       "ssh_timeout": "10000s",
       "ssh_username": "{$ user $}",
       "type": "virtualbox-iso",
       "vboxmanage": [
-        {% if graphicscontroller -%}
-          ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
-        {% endif -%}
-        ["modifyvm", "{{ .Name }}", "--vram", {$ vram | default(16) $}],
+        ["modifyvm", "{{ .Name }}", "--graphicscontroller", "{$ graphicscontroller $}"],
+        ["modifyvm", "{{ .Name }}", "--vram", {$ vram $}],
         ["modifyvm", "{{ .Name }}", "--pae", "off"]
       ],
       "vboxmanage_post": [

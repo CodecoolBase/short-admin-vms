@@ -8,6 +8,9 @@ j2_template_fields:
   - scripts
   - user
 defaults:
+  boot_wait: '10s'
+  clipboardmode: disabled
+  draganddrop: disabled
   cpus: 1
   disk_size: 50000
   domain: localhost
@@ -15,6 +18,8 @@ defaults:
   headless: false
   hostname: vm
   build_memory: 1024
+  graphicscontroller: vmsvga
+  keep_x: false
   packer_j2_name: child.json.j2
   pass: '{$ args.distro $}'
   scripts: []
@@ -22,8 +27,10 @@ defaults:
     - '{$ args.distro $}/cleanup'
     - minimize
   scripts_before: []
+  ssh_handshake_attempts: 10
   user: '{$ args.distro $}'
   vagrant: false
+  vram: 16
 vagrant:
   user: vagrant
   vagrant: true
@@ -206,10 +213,8 @@ variants:
     draganddrop: bidirectional
     graphicscontroller: vboxvga
     keep_x: true
-    memory: 2048
     scripts:
       - '{$ args.distro $}/desktop'
-    vram: 128
   mininet:
     scripts:
       - mininet

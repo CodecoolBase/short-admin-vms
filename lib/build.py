@@ -66,8 +66,11 @@ def _get_context(args, paths, variant, services):
         "services": services,
     }
     merger.merge(context, config["defaults"])
-    merger.merge(context, config["distros"][args.distro]["defaults"])
-    merger.merge(context, config["distros"][args.distro][args.release])
+    distro_config = config["distros"][args.distro]
+    merger.merge(context, distro_config["defaults"])
+    if "variants" in distro_config and variant in distro_config["variants"]:
+        merger.merge(context, distro_config["variants"][variant])
+    merger.merge(context, distro_config[args.release])
     merger.merge(context, config["variants"][variant])
     if args.vagrant:
         merger.merge(context, config["vagrant"])

@@ -1,4 +1,4 @@
-from jinja2 import Environment
+from jinja2 import Environment, StrictUndefined
 from passlib.hash import sha512_crypt
 
 
@@ -8,6 +8,7 @@ def j2_template(string):
         lstrip_blocks=False,
         variable_start_string="{$",
         variable_end_string="$}",
+        undefined=StrictUndefined,
     )
     env.filters["crypt"] = lambda x: sha512_crypt.hash(x, rounds=5000)
     return env.from_string(string if type(string) == str else str(string))

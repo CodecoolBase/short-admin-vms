@@ -33,6 +33,7 @@
       "output_directory": "{$ paths.output_dir $}/{{ build_name }}-{{ user `build_timestamp` }}",
       "output_filename": "{{ build_name }}",
       "shutdown_command": "echo '{$ pass $}' | sudo -S /sbin/shutdown -P now",
+      "skip_export": true,
       "ssh_handshake_attempts": {$ ssh_handshake_attempts | default(10) $},
       "ssh_password": "{$ pass $}",
       "ssh_timeout": "10000s",

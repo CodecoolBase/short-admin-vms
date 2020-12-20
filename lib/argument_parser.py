@@ -59,7 +59,7 @@ def _create_parser(config, first_run, known_variants=[]):
     parser.add_argument("--vagrant", action="store_true")
     distro_subparsers = parser.add_subparsers(title="distros", dest="distro", required=True)
     for distro in config["distros"]:
-        if distro == 'defaults':
+        if distro in ['defaults', 'variants']:
             continue
         distro_parser = distro_subparsers.add_parser(distro)
 
@@ -67,7 +67,7 @@ def _create_parser(config, first_run, known_variants=[]):
 
         releases = list(config["distros"][distro])
         for release in releases:
-            if release == 'defaults':
+            if release in ['defaults', 'variants']:
                 continue
             release_parser = release_subparsers.add_parser(release)
 

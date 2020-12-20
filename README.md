@@ -29,6 +29,8 @@ pipenv shell
 python -m lib.build ubuntu 18.04 root base mininet
 ```
 
+- Debug with `python -m lib.build --debug --dry-run debian 10.6.10 root`
+
 **Note**: if `root` is specified it'll be the first thing to be built, otherwise a `packer-{template}-{release}-root` named VM must exist with a snapshot attached to it called `Root`.
 
 ## Release

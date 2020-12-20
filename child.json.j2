@@ -19,7 +19,7 @@
       "name": "{{ user `name` }}",
       "output_directory": "{$ paths.ova_output_dir $}/{{ build_name }}-{{ user `build_timestamp` }}",
       "output_filename": "{{ build_name }}",
-      "shutdown_command": "echo '{$ pass $}' | sudo -S shutdown -P now",
+      "shutdown_command": "echo '{$ pass $}' | sudo -S /sbin/shutdown -P now",
       "ssh_password": "{$ pass $}",
       "ssh_timeout": "10000s",
       "ssh_username": "{$ user $}",

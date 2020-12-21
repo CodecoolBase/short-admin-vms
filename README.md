@@ -48,7 +48,7 @@ Vagrant boxes are released through Vagrant Cloud.
 1. Login at <https://app.vagrantup.com/> using an existing account
 1. Create a token and copy/save it somewhere
 1. Login with `vagrant cloud auth login --username <username> --token <token>`
-1. Create a box if one doesn't exist yet, e.g. `vagrant cloud auth box create <organization>/<box-name>`
+1. Create a box if one doesn't exist yet, e.g. `vagrant cloud box create <organization>/<box-name>`
 1. Publish an existing local box image, e.g. `vagrant cloud publish <organization>/<box-name> <version> virtualbox <path-to-box>`
 
 ## Licenses

@@ -1,20 +1,24 @@
-from git import Repo
-from semver import VersionInfo
 from pathlib import Path
+from re import match
+from semver import VersionInfo
 import argparse
 
 OUT_DIR = Path("output")
 OVA_DIR = OUT_DIR.joinpath("ova")
 BOX_DIR = OUT_DIR.joinpath("box")
-GIT_LATEST_TAG = Repo().tags[-1].name
-LATEST_VERSION = VersionInfo.parse(GIT_LATEST_TAG[1:])
-RELEASE_VERSION = LATEST_VERSION.bump_patch()
-GIT_RELEASE_TAG = f"v{RELEASE_VERSION}"
 
 
 def main():
+    def tag_type(x):
+        if not match(r"^v\d+\.\d+.\d+$", x):
+            raise argparse.ArgumentTypeError(
+                f"invalid tag: '{x}', must be in vMAJOR.MINOR.PATCH version format (with a leading 'v')"
+            )
+        return x
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", action="store_true")
+    parser.add_argument("--tag", required=True, type=tag_type)
     parser.add_argument("--repo", required=True)
     parser.add_argument("--owner", required=True)
     args = parser.parse_args()
@@ -36,8 +40,8 @@ def main():
     params += [
         "create",
         "--title",
-        GIT_RELEASE_TAG,
-        GIT_RELEASE_TAG,
+        args.tag,
+        args.tag,
         *files,
     ]
     print(" ".join(params))
